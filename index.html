@@ -70,15 +70,18 @@
   }
 
   nav.tabs{
-    display:flex; gap:8px; max-width:640px; margin:0 auto;
+    display:flex; gap:6px; max-width:640px; margin:0 auto;
     background:rgba(70,63,82,0.05);
     padding:5px; border-radius:999px;
+    overflow-x:auto;
+    scrollbar-width:none;
   }
+  nav.tabs::-webkit-scrollbar{ display:none; }
   nav.tabs button{
-    flex:1;
+    flex:1 1 0;
     border:none; background:transparent; cursor:pointer;
-    padding:10px 8px; border-radius:999px;
-    font-family:var(--font-ui); font-size:13px; font-weight:700;
+    padding:10px 6px; border-radius:999px;
+    font-family:var(--font-ui); font-size:12.5px; font-weight:700;
     color:var(--color-text-soft);
     transition:background .25s ease,color .25s ease, box-shadow .25s ease, transform .15s ease;
     white-space:nowrap;
@@ -87,7 +90,7 @@
     display:inline-flex; align-items:center; justify-content:center;
     width:18px;height:18px;border-radius:50%;
     background:rgba(70,63,82,0.12);
-    font-size:11px; margin-right:6px;
+    font-size:11px; margin-right:5px;
   }
   nav.tabs button.active{
     background:var(--color-card); color:var(--color-blue-deep);
@@ -96,6 +99,11 @@
   nav.tabs button.active .num{ background:var(--color-blue); color:#fff; }
   nav.tabs button:active{ transform:scale(.97); }
   nav.tabs button:focus-visible{ outline:2px solid var(--color-blue-deep); outline-offset:2px; }
+
+  @media (max-width:420px){
+    nav.tabs button{ font-size:11.5px; padding:9px 5px; }
+    nav.tabs button .num{ margin-right:3px; }
+  }
 
   main{
     max-width:640px; margin:0 auto; padding:26px 18px 70px;
@@ -326,29 +334,45 @@
   .story-jp ruby rt{ font-size:10px; color:var(--color-mint-deep); font-weight:700; }
   .story-kr{ font-size:13px; color:var(--color-text-soft); margin-top:4px; font-weight:600; }
 
-  .quiz-block{
-    margin-top:26px; padding-top:20px; border-top:1.5px dashed rgba(70,63,82,0.12);
+  /* ===== TAB 4: KANA CHART ===== */
+  .chart-hint{
+    text-align:center; font-size:12.5px; color:var(--color-text-soft);
+    font-weight:600; margin:-6px 0 18px;
   }
-  .quiz-q{ font-size:14px; font-weight:800; margin-bottom:4px; }
-  .quiz-q-kr{ font-size:12px; color:var(--color-text-soft); margin-bottom:12px; font-weight:600; }
-  .quiz-options{
-    display:flex; flex-direction:column; gap:8px; margin-bottom:24px;
+  .kana-grid{
+    display:grid;
+    grid-template-columns:repeat(5, 1fr);
+    gap:8px;
   }
-  .quiz-opt{
-    text-align:left; padding:12px 14px; border-radius:var(--radius-md);
-    border:2px solid rgba(70,63,82,0.08); background:#FCFAF5;
-    font-family:var(--font-jp); font-size:14.5px; font-weight:600; cursor:pointer;
-    transition:all .18s ease;
+  .kana-cell{
+    aspect-ratio:1 / 1;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:var(--color-card); border-radius:var(--radius-md);
+    border:2px solid transparent;
+    box-shadow:var(--shadow-soft);
+    cursor:pointer;
+    transition:transform .12s ease, border-color .2s ease, background .2s ease;
+    padding:4px;
   }
-  .quiz-opt:hover:not(:disabled){ border-color:var(--color-blue); }
-  .quiz-opt:disabled{ cursor:default; }
-  .quiz-opt.correct{ background:#E4F7EC; border-color:var(--color-mint-deep); color:#2E8A6C; }
-  .quiz-opt.wrong{ background:#FDEAE6; border-color:var(--color-coral-deep); color:#C4523C; }
-  .quiz-feedback{
-    font-size:12.5px; font-weight:800; margin-top:-14px; margin-bottom:20px; min-height:16px;
+  .kana-cell.empty{
+    box-shadow:none; background:transparent; cursor:default;
   }
-  .quiz-feedback.correct-text{ color:var(--color-mint-deep); }
-  .quiz-feedback.wrong-text{ color:var(--color-coral-deep); }
+  .kana-cell:not(.empty):hover{ border-color:var(--color-blue); transform:translateY(-2px); }
+  .kana-cell:not(.empty):active{ transform:scale(.94); background:#EAF6FC; }
+  .kana-cell .kc-char{
+    font-family:var(--font-jp); font-size:24px; font-weight:600; color:var(--color-text); line-height:1;
+  }
+  .kana-cell .kc-romaji{
+    font-size:10.5px; font-weight:700; color:var(--color-text-soft); margin-top:4px;
+  }
+  .kana-cell.speaking{
+    border-color:var(--color-mint-deep); background:#E9F9F2;
+  }
+  @media (max-width:420px){
+    .kana-grid{ gap:6px; }
+    .kana-cell .kc-char{ font-size:19px; }
+    .kana-cell .kc-romaji{ font-size:9px; }
+  }
 
   footer{
     text-align:center; font-size:11.5px; color:var(--color-text-soft);
@@ -373,6 +397,7 @@
     <button class="tab-btn active" data-tab="game" role="tab" aria-selected="true"><span class="num">1</span>글자 게임</button>
     <button class="tab-btn" data-tab="sentence" role="tab" aria-selected="false"><span class="num">2</span>AI 일상문장</button>
     <button class="tab-btn" data-tab="story" role="tab" aria-selected="false"><span class="num">3</span>미니 동화책</button>
+    <button class="tab-btn" data-tab="chart" role="tab" aria-selected="false"><span class="num">4</span>글자 전체 표</button>
   </nav>
 </header>
 
@@ -423,12 +448,18 @@
       <h3 class="book-title" id="bookTitleJp"></h3>
       <div class="book-title-kr" id="bookTitleKr"></div>
       <div id="storyLines"></div>
-
-      <div class="quiz-block">
-        <h2 class="section-title" style="margin-bottom:16px;">내용 확인 퀴즈</h2>
-        <div id="storyQuiz"></div>
-      </div>
     </div>
+  </section>
+
+  <!-- ================= TAB 4 : KANA CHART ================= -->
+  <section class="panel" id="panel-chart">
+    <h2 class="section-title">히라가나 · 가타카나 전체 표</h2>
+    <div class="mode-toggle">
+      <button data-chart-mode="hiragana" class="active">あ 히라가나 표</button>
+      <button data-chart-mode="katakana">ア 가타카나 표</button>
+    </div>
+    <div class="chart-hint">글자를 눌러보세요. 발음이 들려요 🔊</div>
+    <div class="kana-grid" id="kanaGrid"></div>
   </section>
 
 </main>
@@ -442,7 +473,8 @@
 const tabBtns = document.querySelectorAll('.tab-btn');
 const panels = { game:document.getElementById('panel-game'),
                   sentence:document.getElementById('panel-sentence'),
-                  story:document.getElementById('panel-story') };
+                  story:document.getElementById('panel-story'),
+                  chart:document.getElementById('panel-chart') };
 
 tabBtns.forEach(btn=>{
   btn.addEventListener('click', ()=>{
@@ -740,20 +772,6 @@ const BOOKS_DATA = [
       { jp:'<ruby>毎朝<rt>まいあさ</rt></ruby>、ミミは <ruby>公園<rt>こうえん</rt></ruby>へ <ruby>行<rt>い</rt></ruby>きます。', kr:'매일 아침, 미미는 공원에 갑니다.' },
       { jp:'<ruby>公園<rt>こうえん</rt></ruby>で <ruby>小鳥<rt>ことり</rt></ruby>と <ruby>遊<rt>あそ</rt></ruby>びます。', kr:'공원에서 작은 새와 놉니다.' },
       { jp:'ミミは とても <ruby>元気<rt>げんき</rt></ruby>です。', kr:'미미는 매우 건강합니다.' }
-    ],
-    quizzes: [
-      {
-        q:'ミミの<ruby>色<rt>いろ</rt></ruby>は<ruby>何<rt>なん</rt></ruby>ですか？',
-        qkr:'미미의 색깔은 무엇입니까?',
-        options:['白い（하얀색）','黒い（검은색）','茶色（갈색）','青い（파란색）'],
-        answerIdx:0
-      },
-      {
-        q:'ミミは<ruby>毎朝<rt>まいあさ</rt></ruby>どこへ<ruby>行<rt>い</rt></ruby>きますか？',
-        qkr:'미미는 매일 아침 어디에 갑니까?',
-        options:['学校（がっこう）','公園（こうえん）','病院（びょういん）','駅（えき）'],
-        answerIdx:1
-      }
     ]
   },
   {
@@ -767,20 +785,6 @@ const BOOKS_DATA = [
       { jp:'でも、<ruby>兎<rt>うさぎ</rt></ruby>は <ruby>途中<rt>とちゅう</rt></ruby>で <ruby>寝<rt>ね</rt></ruby>ます。', kr:'하지만 토끼는 도중에 잠을 잡니다.' },
       { jp:'<ruby>亀<rt>かめ</rt></ruby>は ゆっくり <ruby>歩<rt>ある</rt></ruby>きます。', kr:'거북이는 천천히 걷습니다.' },
       { jp:'<ruby>最後<rt>さいご</rt></ruby>に、<ruby>亀<rt>かめ</rt></ruby>が <ruby>勝<rt>か</rt></ruby>ちます。', kr:'마지막에 거북이가 이깁니다.' }
-    ],
-    quizzes: [
-      {
-        q:'<ruby>兎<rt>うさぎ</rt></ruby>は<ruby>途中<rt>とちゅう</rt></ruby>で<ruby>何<rt>なに</rt></ruby>をしますか。',
-        qkr:'토끼는 도중에 무엇을 합니까?',
-        options:['食べます（먹습니다）','寝ます（잡니다）','泳ぎます（수영합니다）','歌います（노래합니다）'],
-        answerIdx:1
-      },
-      {
-        q:'<ruby>競争<rt>きょうそう</rt></ruby>に<ruby>勝<rt>か</rt></ruby>つのは<ruby>誰<rt>だれ</rt></ruby>ですか。',
-        qkr:'경주에서 이기는 것은 누구입니까?',
-        options:['兎（토끼）','亀（거북이）','犬（개）','猫（고양이）'],
-        answerIdx:1
-      }
     ]
   },
   {
@@ -794,20 +798,6 @@ const BOOKS_DATA = [
       { jp:'<ruby>風<rt>かぜ</rt></ruby>は<ruby>強<rt>つよ</rt></ruby>く<ruby>吹<rt>ふ</rt></ruby>きます。でも、コートは<ruby>脱<rt>ぬ</rt></ruby>げません。', kr:'바람이 세게 붑니다. 하지만 코트는 벗겨지지 않습니다.' },
       { jp:'<ruby>太陽<rt>たいよう</rt></ruby>は<ruby>暖<rt>あたた</rt></ruby>かいです。', kr:'해는 따뜻합니다.' },
       { jp:'だから、<ruby>人<rt>ひと</rt></ruby>はコートを<ruby>脱<rt>ぬ</rt></ruby>ぎます。<ruby>太陽<rt>たいよう</rt></ruby>の<ruby>勝<rt>か</rt></ruby>ちです。', kr:'그래서 사람은 코트를 벗습니다. 해의 승리입니다.' }
-    ],
-    quizzes: [
-      {
-        q:'<ruby>太陽<rt>たいよう</rt></ruby>と<ruby>風<rt>かぜ</rt></ruby>は<ruby>何<rt>なに</rt></ruby>をしましたか。',
-        qkr:'해와 바람은 무엇을 했습니까?',
-        options:['喧嘩をしました（다투었습니다）','料理をしました（요리를 했습니다）','旅行をしました（여행을 했습니다）','勉強をしました（공부를 했습니다）'],
-        answerIdx:0
-      },
-      {
-        q:'<ruby>最後<rt>さいご</rt></ruby>に<ruby>勝<rt>か</rt></ruby>ったのは<ruby>誰<rt>だれ</rt></ruby>ですか。',
-        qkr:'마지막에 이긴 것은 누구입니까?',
-        options:['太陽（해）','風（바람）','人（사람）','雲（구름）'],
-        answerIdx:0
-      }
     ]
   }
 ];
@@ -816,7 +806,6 @@ const bookSelectEl = document.getElementById('bookSelect');
 const bookTitleJpEl = document.getElementById('bookTitleJp');
 const bookTitleKrEl = document.getElementById('bookTitleKr');
 const storyLinesEl = document.getElementById('storyLines');
-const storyQuizEl = document.getElementById('storyQuiz');
 
 let currentBookId = BOOKS_DATA[0].id;
 
@@ -849,51 +838,82 @@ function renderBook(){
     div.innerHTML = `<div class="story-jp">${line.jp}</div><div class="story-kr">${line.kr}</div>`;
     storyLinesEl.appendChild(div);
   });
-
-  storyQuizEl.innerHTML = '';
-  book.quizzes.forEach((item, qi)=>{
-    const block = document.createElement('div');
-    block.innerHTML = `
-      <div class="quiz-q">Q${qi+1}. ${item.q}</div>
-      <div class="quiz-q-kr">${item.qkr}</div>
-      <div class="quiz-options" data-qi="${qi}">
-        ${item.options.map((opt,oi)=>`<button class="quiz-opt" data-oi="${oi}">${opt}</button>`).join('')}
-      </div>
-      <div class="quiz-feedback" id="qf-${qi}"></div>
-    `;
-    storyQuizEl.appendChild(block);
-  });
 }
-
-storyQuizEl.addEventListener('click', (e)=>{
-  const btn = e.target.closest('.quiz-opt');
-  if(!btn) return;
-  const group = btn.closest('.quiz-options');
-  if(group.dataset.answered) return;
-  group.dataset.answered = 'true';
-
-  const book = BOOKS_DATA.find(b=>b.id === currentBookId);
-  const qi = Number(group.dataset.qi);
-  const oi = Number(btn.dataset.oi);
-  const item = book.quizzes[qi];
-  const feedback = document.getElementById(`qf-${qi}`);
-  const allOpts = group.querySelectorAll('.quiz-opt');
-  allOpts.forEach(o=>o.disabled = true);
-
-  if(oi === item.answerIdx){
-    btn.classList.add('correct');
-    feedback.textContent = '정답입니다! ✅';
-    feedback.className = 'quiz-feedback correct-text';
-  } else {
-    btn.classList.add('wrong');
-    allOpts[item.answerIdx].classList.add('correct');
-    feedback.textContent = '다시 한번 생각해보세요. ❌';
-    feedback.className = 'quiz-feedback wrong-text';
-  }
-});
 
 renderBookSelect();
 renderBook();
+
+/* ============================================================
+   TAB 4: 히라가나 · 가타카나 전체 표 (TTS 발음 지원)
+============================================================ */
+const kanaGrid = document.getElementById('kanaGrid');
+const chartModeBtns = document.querySelectorAll('[data-chart-mode]');
+let chartMode = 'hiragana';
+
+// 오십음도 배열 구조 (행 x 5열), null은 빈 칸
+const KANA_CHART_LAYOUT = [
+  ['a','i','u','e','o'],
+  ['ka','ki','ku','ke','ko'],
+  ['sa','shi','su','se','so'],
+  ['ta','chi','tsu','te','to'],
+  ['na','ni','nu','ne','no'],
+  ['ha','hi','fu','he','ho'],
+  ['ma','mi','mu','me','mo'],
+  ['ya',null,'yu',null,'yo'],
+  ['ra','ri','ru','re','ro'],
+  ['wa',null,null,null,'wo'],
+  ['n',null,null,null,null]
+];
+
+function findKana(mode, romaji){
+  const pool = mode === 'hiragana' ? HIRAGANA : KATAKANA;
+  return pool.find(item=>item.r === romaji);
+}
+
+function speakKana(char, mode){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(char);
+  utter.lang = 'ja-JP';
+  utter.rate = 0.8;
+  window.speechSynthesis.speak(utter);
+}
+
+function renderKanaChart(){
+  kanaGrid.innerHTML = '';
+  KANA_CHART_LAYOUT.forEach(row=>{
+    row.forEach(romaji=>{
+      if(romaji === null){
+        const empty = document.createElement('div');
+        empty.className = 'kana-cell empty';
+        kanaGrid.appendChild(empty);
+        return;
+      }
+      const item = findKana(chartMode, romaji);
+      if(!item) return;
+      const cell = document.createElement('div');
+      cell.className = 'kana-cell';
+      cell.innerHTML = `<span class="kc-char">${item.c}</span><span class="kc-romaji">${item.r}</span>`;
+      cell.addEventListener('click', ()=>{
+        speakKana(item.c, chartMode);
+        cell.classList.add('speaking');
+        setTimeout(()=>cell.classList.remove('speaking'), 500);
+      });
+      kanaGrid.appendChild(cell);
+    });
+  });
+}
+
+chartModeBtns.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    chartModeBtns.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    chartMode = btn.dataset.chartMode;
+    renderKanaChart();
+  });
+});
+
+renderKanaChart();
 </script>
 </body>
 </html>
