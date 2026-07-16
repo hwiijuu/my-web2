@@ -281,6 +281,24 @@
   .vocab-jp{ font-family:var(--font-jp); font-weight:700; color:var(--color-blue-deep); min-width:64px; }
 
   /* ===== TAB 3: STORYBOOK ===== */
+  .book-select{
+    display:flex; gap:10px; margin-bottom:18px; overflow-x:auto; padding-bottom:2px;
+  }
+  .book-select button{
+    flex:0 0 auto;
+    display:flex; align-items:center; gap:8px;
+    padding:10px 16px; border-radius:999px;
+    border:2px solid transparent;
+    background:var(--color-card); box-shadow:var(--shadow-soft);
+    font-family:var(--font-ui); font-weight:800; font-size:13.5px; color:var(--color-text-soft);
+    cursor:pointer; transition:all .2s ease; white-space:nowrap;
+  }
+  .book-select button .b-emoji{ font-size:16px; }
+  .book-select button.active{
+    border-color:var(--color-beige-deep); color:#8A6A2E; background:#FBF4E4;
+  }
+  .book-select button:active{ transform:scale(.97); }
+
   .book{
     background:var(--color-card); border-radius:var(--radius-lg);
     box-shadow:var(--shadow-soft);
@@ -400,9 +418,10 @@
   <!-- ================= TAB 3 : STORYBOOK ================= -->
   <section class="panel" id="panel-story">
     <h2 class="section-title">초급자용 미니 동화책</h2>
+    <div class="book-select" id="bookSelect"></div>
     <div class="book">
-      <h3 class="book-title">ねこの はなし</h3>
-      <div class="book-title-kr">고양이 이야기</div>
+      <h3 class="book-title" id="bookTitleJp"></h3>
+      <div class="book-title-kr" id="bookTitleKr"></div>
       <div id="storyLines"></div>
 
       <div class="quiz-block">
@@ -616,6 +635,61 @@ const SENTENCES = [
       {jp:'音楽(おんがく)', kr:'음악'},
       {jp:'聞く(きく)', kr:'듣다'}
     ]
+  },
+  {
+    tag: '여행',
+    main: '<ruby>来年<rt>らいねん</rt></ruby><ruby>日本<rt>にほん</rt></ruby>へ<ruby>旅行<rt>りょこう</rt></ruby>に<ruby>行<rt>い</rt></ruby>きます。',
+    kana: 'らいねん にほんへ りょこうに いきます。',
+    kr: '내년에 일본으로 여행을 갑니다.',
+    vocab: [
+      {jp:'来年(らいねん)', kr:'내년'},
+      {jp:'旅行(りょこう)', kr:'여행'},
+      {jp:'行きます(いきます)', kr:'갑니다'}
+    ]
+  },
+  {
+    tag: '음식',
+    main: 'この<ruby>拉麺<rt>らーめん</rt></ruby>はとても<ruby>美味<rt>おい</rt></ruby>しいです。',
+    kana: 'この らーめんは とても おいしいです。',
+    kr: '이 라면은 매우 맛있습니다.',
+    vocab: [
+      {jp:'美味しい(おいしい)', kr:'맛있다'},
+      {jp:'とても', kr:'매우'},
+      {jp:'ラーメン', kr:'라멘'}
+    ]
+  },
+  {
+    tag: '날씨 · 계절',
+    main: '<ruby>冬<rt>ふゆ</rt></ruby>はとても<ruby>寒<rt>さむ</rt></ruby>いです。',
+    kana: 'ふゆは とても さむいです。',
+    kr: '겨울은 매우 춥습니다.',
+    vocab: [
+      {jp:'冬(ふゆ)', kr:'겨울'},
+      {jp:'寒い(さむい)', kr:'춥다'},
+      {jp:'とても', kr:'매우'}
+    ]
+  },
+  {
+    tag: '취미',
+    main: '<ruby>週末<rt>しゅうまつ</rt></ruby>に<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>ます。',
+    kana: 'しゅうまつに えいがを みます。',
+    kr: '주말에 영화를 봅니다.',
+    vocab: [
+      {jp:'週末(しゅうまつ)', kr:'주말'},
+      {jp:'映画(えいが)', kr:'영화'},
+      {jp:'見ます(みます)', kr:'봅니다'}
+    ]
+  },
+  {
+    tag: '쇼핑',
+    main: 'デパートで<ruby>新<rt>あたら</rt></ruby>しい<ruby>靴<rt>くつ</rt></ruby>を<ruby>買<rt>か</rt></ruby>いました。',
+    kana: 'でぱーとで あたらしい くつを かいました。',
+    kr: '백화점에서 새 신발을 샀습니다.',
+    vocab: [
+      {jp:'新しい(あたらしい)', kr:'새롭다'},
+      {jp:'靴(くつ)', kr:'신발'},
+      {jp:'買いました(かいました)', kr:'샀습니다'}
+    ]
   }
 ];
 
@@ -654,50 +728,142 @@ sentenceList.addEventListener('click', (e)=>{
 /* ============================================================
    TAB 3: 미니 동화책
 ============================================================ */
-const STORY = [
-  { jp:'これは ねこです。<ruby>名前<rt>なまえ</rt></ruby>は「ミミ」です。', kr:'이것은 고양이입니다. 이름은 "미미"입니다.' },
-  { jp:'ミミは <ruby>白<rt>しろ</rt></ruby>くて <ruby>小<rt>ちい</rt></ruby>さいです。', kr:'미미는 하얗고 작습니다.' },
-  { jp:'<ruby>毎朝<rt>まいあさ</rt></ruby>、ミミは <ruby>公園<rt>こうえん</rt></ruby>へ <ruby>行<rt>い</rt></ruby>きます。', kr:'매일 아침, 미미는 공원에 갑니다.' },
-  { jp:'<ruby>公園<rt>こうえん</rt></ruby>で <ruby>小鳥<rt>ことり</rt></ruby>と <ruby>遊<rt>あそ</rt></ruby>びます。', kr:'공원에서 작은 새와 놉니다.' },
-  { jp:'ミミは とても <ruby>元気<rt>げんき</rt></ruby>です。', kr:'미미는 매우 건강합니다.' }
-];
-
-const storyLines = document.getElementById('storyLines');
-STORY.forEach(line=>{
-  const div = document.createElement('div');
-  div.className = 'story-line';
-  div.innerHTML = `<div class="story-jp">${line.jp}</div><div class="story-kr">${line.kr}</div>`;
-  storyLines.appendChild(div);
-});
-
-const STORY_QUIZ = [
+const BOOKS_DATA = [
   {
-    q:'ミミの<ruby>色<rt>いろ</rt></ruby>は<ruby>何<rt>なん</rt></ruby>ですか？',
-    qkr:'미미의 색깔은 무엇입니까?',
-    options:['白い（하얀색）','黒い（검은색）','茶色（갈색）','青い（파란색）'],
-    answerIdx:0
+    id: 1,
+    shortTitle: '🐱 고양이',
+    titleJp: 'ねこの はなし',
+    titleKr: '고양이 이야기',
+    story: [
+      { jp:'これは ねこです。<ruby>名前<rt>なまえ</rt></ruby>は「ミミ」です。', kr:'이것은 고양이입니다. 이름은 "미미"입니다.' },
+      { jp:'ミミは <ruby>白<rt>しろ</rt></ruby>くて <ruby>小<rt>ちい</rt></ruby>さいです。', kr:'미미는 하얗고 작습니다.' },
+      { jp:'<ruby>毎朝<rt>まいあさ</rt></ruby>、ミミは <ruby>公園<rt>こうえん</rt></ruby>へ <ruby>行<rt>い</rt></ruby>きます。', kr:'매일 아침, 미미는 공원에 갑니다.' },
+      { jp:'<ruby>公園<rt>こうえん</rt></ruby>で <ruby>小鳥<rt>ことり</rt></ruby>と <ruby>遊<rt>あそ</rt></ruby>びます。', kr:'공원에서 작은 새와 놉니다.' },
+      { jp:'ミミは とても <ruby>元気<rt>げんき</rt></ruby>です。', kr:'미미는 매우 건강합니다.' }
+    ],
+    quizzes: [
+      {
+        q:'ミミの<ruby>色<rt>いろ</rt></ruby>は<ruby>何<rt>なん</rt></ruby>ですか？',
+        qkr:'미미의 색깔은 무엇입니까?',
+        options:['白い（하얀색）','黒い（검은색）','茶色（갈색）','青い（파란색）'],
+        answerIdx:0
+      },
+      {
+        q:'ミミは<ruby>毎朝<rt>まいあさ</rt></ruby>どこへ<ruby>行<rt>い</rt></ruby>きますか？',
+        qkr:'미미는 매일 아침 어디에 갑니까?',
+        options:['学校（がっこう）','公園（こうえん）','病院（びょういん）','駅（えき）'],
+        answerIdx:1
+      }
+    ]
   },
   {
-    q:'ミミは<ruby>毎朝<rt>まいあさ</rt></ruby>どこへ<ruby>行<rt>い</rt></ruby>きますか？',
-    qkr:'미미는 매일 아침 어디에 갑니까?',
-    options:['学校（がっこう）','公園（こうえん）','病院（びょういん）','駅（えき）'],
-    answerIdx:1
+    id: 2,
+    shortTitle: '🐢 토끼와 거북이',
+    titleJp: 'うさぎと かめ',
+    titleKr: '토끼와 거북이',
+    story: [
+      { jp:'<ruby>兎<rt>うさぎ</rt></ruby>と<ruby>亀<rt>かめ</rt></ruby>が<ruby>競争<rt>きょうそう</rt></ruby>します。', kr:'토끼와 거북이가 경주를 합니다.' },
+      { jp:'<ruby>兎<rt>うさぎ</rt></ruby>は とても <ruby>速<rt>はや</rt></ruby>いです。', kr:'토끼는 매우 빠릅니다.' },
+      { jp:'でも、<ruby>兎<rt>うさぎ</rt></ruby>は <ruby>途中<rt>とちゅう</rt></ruby>で <ruby>寝<rt>ね</rt></ruby>ます。', kr:'하지만 토끼는 도중에 잠을 잡니다.' },
+      { jp:'<ruby>亀<rt>かめ</rt></ruby>は ゆっくり <ruby>歩<rt>ある</rt></ruby>きます。', kr:'거북이는 천천히 걷습니다.' },
+      { jp:'<ruby>最後<rt>さいご</rt></ruby>に、<ruby>亀<rt>かめ</rt></ruby>が <ruby>勝<rt>か</rt></ruby>ちます。', kr:'마지막에 거북이가 이깁니다.' }
+    ],
+    quizzes: [
+      {
+        q:'<ruby>兎<rt>うさぎ</rt></ruby>は<ruby>途中<rt>とちゅう</rt></ruby>で<ruby>何<rt>なに</rt></ruby>をしますか。',
+        qkr:'토끼는 도중에 무엇을 합니까?',
+        options:['食べます（먹습니다）','寝ます（잡니다）','泳ぎます（수영합니다）','歌います（노래합니다）'],
+        answerIdx:1
+      },
+      {
+        q:'<ruby>競争<rt>きょうそう</rt></ruby>に<ruby>勝<rt>か</rt></ruby>つのは<ruby>誰<rt>だれ</rt></ruby>ですか。',
+        qkr:'경주에서 이기는 것은 누구입니까?',
+        options:['兎（토끼）','亀（거북이）','犬（개）','猫（고양이）'],
+        answerIdx:1
+      }
+    ]
+  },
+  {
+    id: 3,
+    shortTitle: '☀️ 해와 바람',
+    titleJp: 'たいようと かぜ',
+    titleKr: '해와 바람',
+    story: [
+      { jp:'<ruby>太陽<rt>たいよう</rt></ruby>と<ruby>風<rt>かぜ</rt></ruby>が<ruby>喧嘩<rt>けんか</rt></ruby>します。', kr:'해와 바람이 다툽니다.' },
+      { jp:'どちらが<ruby>強<rt>つよ</rt></ruby>いか<ruby>決<rt>き</rt></ruby>めます。', kr:'누가 더 강한지 정합니다.' },
+      { jp:'<ruby>風<rt>かぜ</rt></ruby>は<ruby>強<rt>つよ</rt></ruby>く<ruby>吹<rt>ふ</rt></ruby>きます。でも、コートは<ruby>脱<rt>ぬ</rt></ruby>げません。', kr:'바람이 세게 붑니다. 하지만 코트는 벗겨지지 않습니다.' },
+      { jp:'<ruby>太陽<rt>たいよう</rt></ruby>は<ruby>暖<rt>あたた</rt></ruby>かいです。', kr:'해는 따뜻합니다.' },
+      { jp:'だから、<ruby>人<rt>ひと</rt></ruby>はコートを<ruby>脱<rt>ぬ</rt></ruby>ぎます。<ruby>太陽<rt>たいよう</rt></ruby>の<ruby>勝<rt>か</rt></ruby>ちです。', kr:'그래서 사람은 코트를 벗습니다. 해의 승리입니다.' }
+    ],
+    quizzes: [
+      {
+        q:'<ruby>太陽<rt>たいよう</rt></ruby>と<ruby>風<rt>かぜ</rt></ruby>は<ruby>何<rt>なに</rt></ruby>をしましたか。',
+        qkr:'해와 바람은 무엇을 했습니까?',
+        options:['喧嘩をしました（다투었습니다）','料理をしました（요리를 했습니다）','旅行をしました（여행을 했습니다）','勉強をしました（공부를 했습니다）'],
+        answerIdx:0
+      },
+      {
+        q:'<ruby>最後<rt>さいご</rt></ruby>に<ruby>勝<rt>か</rt></ruby>ったのは<ruby>誰<rt>だれ</rt></ruby>ですか。',
+        qkr:'마지막에 이긴 것은 누구입니까?',
+        options:['太陽（해）','風（바람）','人（사람）','雲（구름）'],
+        answerIdx:0
+      }
+    ]
   }
 ];
 
+const bookSelectEl = document.getElementById('bookSelect');
+const bookTitleJpEl = document.getElementById('bookTitleJp');
+const bookTitleKrEl = document.getElementById('bookTitleKr');
+const storyLinesEl = document.getElementById('storyLines');
 const storyQuizEl = document.getElementById('storyQuiz');
-STORY_QUIZ.forEach((item, qi)=>{
-  const block = document.createElement('div');
-  block.innerHTML = `
-    <div class="quiz-q">Q${qi+1}. ${item.q}</div>
-    <div class="quiz-q-kr">${item.qkr}</div>
-    <div class="quiz-options" data-qi="${qi}">
-      ${item.options.map((opt,oi)=>`<button class="quiz-opt" data-oi="${oi}">${opt}</button>`).join('')}
-    </div>
-    <div class="quiz-feedback" id="qf-${qi}"></div>
-  `;
-  storyQuizEl.appendChild(block);
-});
+
+let currentBookId = BOOKS_DATA[0].id;
+
+function renderBookSelect(){
+  bookSelectEl.innerHTML = '';
+  BOOKS_DATA.forEach(book=>{
+    const btn = document.createElement('button');
+    btn.className = book.id === currentBookId ? 'active' : '';
+    btn.dataset.id = book.id;
+    btn.innerHTML = `<span>${book.shortTitle}</span>`;
+    btn.addEventListener('click', ()=>{
+      currentBookId = book.id;
+      renderBookSelect();
+      renderBook();
+    });
+    bookSelectEl.appendChild(btn);
+  });
+}
+
+function renderBook(){
+  const book = BOOKS_DATA.find(b=>b.id === currentBookId);
+
+  bookTitleJpEl.textContent = book.titleJp;
+  bookTitleKrEl.textContent = book.titleKr;
+
+  storyLinesEl.innerHTML = '';
+  book.story.forEach(line=>{
+    const div = document.createElement('div');
+    div.className = 'story-line';
+    div.innerHTML = `<div class="story-jp">${line.jp}</div><div class="story-kr">${line.kr}</div>`;
+    storyLinesEl.appendChild(div);
+  });
+
+  storyQuizEl.innerHTML = '';
+  book.quizzes.forEach((item, qi)=>{
+    const block = document.createElement('div');
+    block.innerHTML = `
+      <div class="quiz-q">Q${qi+1}. ${item.q}</div>
+      <div class="quiz-q-kr">${item.qkr}</div>
+      <div class="quiz-options" data-qi="${qi}">
+        ${item.options.map((opt,oi)=>`<button class="quiz-opt" data-oi="${oi}">${opt}</button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="qf-${qi}"></div>
+    `;
+    storyQuizEl.appendChild(block);
+  });
+}
 
 storyQuizEl.addEventListener('click', (e)=>{
   const btn = e.target.closest('.quiz-opt');
@@ -706,9 +872,10 @@ storyQuizEl.addEventListener('click', (e)=>{
   if(group.dataset.answered) return;
   group.dataset.answered = 'true';
 
+  const book = BOOKS_DATA.find(b=>b.id === currentBookId);
   const qi = Number(group.dataset.qi);
   const oi = Number(btn.dataset.oi);
-  const item = STORY_QUIZ[qi];
+  const item = book.quizzes[qi];
   const feedback = document.getElementById(`qf-${qi}`);
   const allOpts = group.querySelectorAll('.quiz-opt');
   allOpts.forEach(o=>o.disabled = true);
@@ -724,6 +891,9 @@ storyQuizEl.addEventListener('click', (e)=>{
     feedback.className = 'quiz-feedback wrong-text';
   }
 });
+
+renderBookSelect();
+renderBook();
 </script>
 </body>
 </html>
